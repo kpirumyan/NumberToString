@@ -5,30 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NumberToString"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance local:NumberForm}" d:DesignHeight="450" d:DesignWidth="800"
         Title="MainWindow" Height="200" Width="600" WindowStartupLocation="CenterScreen">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="5*"/>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="4*"/>
-            <RowDefinition Height="10"/>
-        </Grid.RowDefinitions>
-        <Label Content="Enter number:" Grid.Row="1" Grid.Column="1"/>
-        <TextBox Width="auto" Grid.Row="1" Grid.Column="3"/>
-        <Button Content="Convert" Grid.Row="1" Grid.Column="5"/>
-        <Label Content="Result:" Grid.Row="3" Grid.Column="1"/>
-        <Border Grid.Row="3" Grid.Column="3" BorderThickness="1" BorderBrush="#FFABADB3">
-            <TextBlock />
-        </Border>
-    </Grid>
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="10"/>
+      <ColumnDefinition Width="auto"/>
+      <ColumnDefinition Width="10"/>
+      <ColumnDefinition Width="5*"/>
+      <ColumnDefinition Width="10"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="10"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="10"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="10"/>
+      <RowDefinition Height="4*"/>
+      <RowDefinition Height="10"/>
+    </Grid.RowDefinitions>
+    <Label Content="Enter number:" Grid.Row="1" Grid.Column="1"/>
+
+    <TextBox Width="auto" Grid.Row="1" Grid.Column="3"
+             Text="{Binding Input, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+             Validation.ErrorTemplate="{StaticResource errorTemplate}"
+             VerticalAlignment="Center"/>
+    <Button Content="Convert" Grid.Row="1" Grid.Column="5" Command="{Binding ConvertCommand}"/>
+    <Label Content="Result:" Grid.Row="3" Grid.Column="1"/>
+    <Border Grid.Row="3" Grid.Column="3" BorderThickness="1" BorderBrush="#FFABADB3">
+      <TextBlock Text="{Binding Output}"/>
+    </Border>
+  </Grid>
 </Window>

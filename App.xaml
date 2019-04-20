@@ -3,7 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:NumberToString"
              StartupUri="MainWindow.xaml">
-    <Application.Resources>
-         
-    </Application.Resources>
+  <Application.Resources>
+    <ControlTemplate x:Key="errorTemplate">
+      <Border BorderThickness="1" BorderBrush="Red">
+        <Grid>
+          <AdornedElementPlaceholder/>
+          <TextBlock Text="{Binding [0].ErrorContent}" 
+                     Foreground="Red" VerticalAlignment="Center" 
+                     HorizontalAlignment="Right"
+                     Margin="0 0 5 0"/>
+        </Grid>
+      </Border>
+    </ControlTemplate>
+  </Application.Resources>
 </Application>

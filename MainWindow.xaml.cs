@@ -23,6 +23,7 @@ namespace NumberToString
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new NumberForm();
         }
     }
 }
