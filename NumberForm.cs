@@ -76,7 +76,7 @@ namespace NumberToString
       if (parameter is bool) return !(bool)parameter;
       return false;
     }
-    
+
     private void ExecuteConvert(object parameter)
     {
       _list = new List<string>();
@@ -95,9 +95,11 @@ namespace NumberToString
       int l = array.Length;
       for (int i = 0, j = 0; i < l; i += 3, j++)
       {
-        if (j == 1) _list.Add(" thousand ");
-        else if (j == 2) _list.Add(" million ");
-        else if (j == 3) _list.Add(" billion ");
+        if (i + 2 < l && array[i] == 0 && array[i + 1] == 0 && array[i + 2] == 0) continue;
+
+        if (j == 1) _list.Add("thousand");
+        else if (j == 2) _list.Add("million");
+        else if (j == 3) _list.Add("billion");
 
         if (i + 2 < l)
           ThreeDigits(array[i], array[i + 1], array[i + 2]);
@@ -110,7 +112,7 @@ namespace NumberToString
       _list.Reverse();
       foreach (var item in _list)
       {
-        Output += item;
+        Output += item + " ";
       }
     }
 
@@ -137,7 +139,7 @@ namespace NumberToString
       TwoDigits(n1, n2);
       if (n3 > 0)
       {
-        _list.Add(" hundred ");
+        _list.Add("hundred");
         OneDigit(n3);
       }
     }
