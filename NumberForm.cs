@@ -61,109 +61,6 @@ namespace NumberToString
 
     #endregion
 
-    #region Properties
-
-
-
-    #endregion
-
-    #region Commands
-
-    public static RelayCommand ConvertCommand { get; set; }
-
-    private bool CanExecuteConvert(object parameter)
-    {
-      if (parameter is bool) return !(bool)parameter;
-      return false;
-    }
-
-    private void ExecuteConvert(object parameter)
-    {
-      _list = new List<string>();
-      Output = string.Empty;
-      string s = Regex.Replace(Input, @"\s", "");
-      int[] array = Array.ConvertAll(s.ToCharArray(), n => Convert.ToInt32(n.ToString()));
-
-      if (array.Length == 1 && array[0] == 0)
-      {
-        Output = "zero";
-        return;
-      }
-
-      Array.Reverse(array);
-
-      int l = array.Length;
-      for (int i = 0, j = 0; i < l; i += 3, j++)
-      {
-        if (i + 2 < l && array[i] == 0 && array[i + 1] == 0 && array[i + 2] == 0) continue;
-
-        if (j == 1) _list.Add("thousand");
-        else if (j == 2) _list.Add("million");
-        else if (j == 3) _list.Add("billion");
-
-        if (i + 2 < l)
-          ThreeDigits(array[i], array[i + 1], array[i + 2]);
-        else if (i + 1 < l)
-          TwoDigits(array[i], array[i + 1]);
-        else
-          OneDigit(array[i]);
-      }
-
-      _list.Reverse();
-      foreach (var item in _list)
-      {
-        Output += item + " ";
-      }
-    }
-
-    #endregion
-
-    #region Methods
-
-    private void OneDigit(int n)
-    {
-      _list.Add(FromOneToNine(n));
-    }
-
-    private void TwoDigits(int n1, int n2)
-    {
-      if (n2 == 0)
-        _list.Add(FromOneToNine(n1));
-      else if (n2 == 1)
-        _list.Add(FromTenToNineteen(n2, n1));
-      else _list.Add(FromTwentyToHundred(n2, n1));
-    }
-
-    private void ThreeDigits(int n1, int n2, int n3)
-    {
-      TwoDigits(n1, n2);
-      if (n3 > 0)
-      {
-        _list.Add("hundred");
-        OneDigit(n3);
-      }
-    }
-
-    private string FromOneToNine(int num)
-    {
-      return num != 0 ? _dictionary[num] : "";
-    }
-
-    private string FromTenToNineteen(int num1, int num2)
-    {
-      string numString = $"{num1}{num2}";
-      int index = Convert.ToInt32(numString);
-      return _dictionary[index];
-    }
-
-    private string FromTwentyToHundred(int num1, int num2)
-    {
-      int index = Convert.ToInt32(num1.ToString());
-      return num2 == 0 ? $"{_dictionary[num1 * 10]}" : $"{_dictionary[num1 * 10]} {_dictionary[num2]}";
-    }
-
-    #endregion
-
     #region DependencyProperties
 
     public string Input
@@ -171,8 +68,12 @@ namespace NumberToString
       get { return _input; }
       set
       {
+        // Clear previous format (remove all whitespaces)
         string s = Regex.Replace(value, @"\s", "");
+
+        // Format input string to decimal
         _input = long.TryParse(s, out long v) ? $"{v:N0}" : s;
+
         OnPropertyChanged("Input");
       }
     }
@@ -199,6 +100,125 @@ namespace NumberToString
 
     #endregion
 
+    #region Commands
+
+    public static RelayCommand ConvertCommand { get; set; }
+
+    private bool CanExecuteConvert(object parameter)
+    {
+      if (parameter is bool) return !(bool)parameter;
+      return false;
+    }
+
+    private void ExecuteConvert(object parameter)
+    {
+      _list = new List<string>();
+
+      // Clear output field
+      Output = string.Empty;
+
+      // Remove all whitespaces from the input string
+      string s = Regex.Replace(Input, @"\s", "");
+
+      // Get an array of integers from string
+      int[] array = Array.ConvertAll(s.ToCharArray(), n => Convert.ToInt32(n.ToString()));
+
+      // Condition if input is equal to zero
+      if (array.Length == 1 && array[0] == 0)
+      {
+        Output = "zero";
+        return;
+      }
+
+      Array.Reverse(array);
+      int l = array.Length;
+
+      // Devide the input number to triplets (3-digit blocks) 
+      for (int i = 0, j = 0; i < l; i += 3, j++)
+      {
+        // Condition when all 3 numbers of triplet are equal to zero. If so do not type words like thousand, million or billion.
+        if (i + 2 < l && array[i] == 0 && array[i + 1] == 0 && array[i + 2] == 0) continue;
+
+        // Variable 'j' is a triplet count 
+        if (j == 1) _list.Add("thousand");
+        else if (j == 2) _list.Add("million");
+        else if (j == 3) _list.Add("billion");
+
+        // Conditions how to print triplet 
+        if (i + 2 < l)
+          ThreeDigits(array[i], array[i + 1], array[i + 2]);
+        else if (i + 1 < l)
+          TwoDigits(array[i], array[i + 1]);
+        else
+          OneDigit(array[i]);
+      }
+
+      _list.Reverse();
+
+      // Build final output value from list of strings
+      foreach (var item in _list)
+      {
+        Output += item + " ";
+      }
+
+      // Capitalize output first letter
+      Output = Output[0].ToString().ToUpper() + Output.Substring(1);
+    }
+
+    #endregion
+
+    #region Methods
+
+    // Add 1-digit converted number to output string list
+    private void OneDigit(int n)
+    {
+      _list.Add(FromOneToNine(n));
+    }
+
+    // Add 2-digit converted number to output string list
+    private void TwoDigits(int n1, int n2)
+    {
+      if (n2 == 0)
+        _list.Add(FromOneToNine(n1));
+      else if (n2 == 1)
+        _list.Add(FromTenToNineteen(n2, n1));
+      else _list.Add(FromTwentyToHundred(n2, n1));
+    }
+
+    // Add 3-digit converted number to output string list
+    private void ThreeDigits(int n1, int n2, int n3)
+    {
+      TwoDigits(n1, n2);
+      if (n3 > 0)
+      {
+        _list.Add("hundred");
+        OneDigit(n3);
+      }
+    }
+
+    // Convert number from 1 to 9 to word
+    private string FromOneToNine(int num)
+    {
+      return num != 0 ? _dictionary[num] : "";
+    }
+
+    // Convert number from 10 to 19 to word
+    private string FromTenToNineteen(int num1, int num2)
+    {
+      string numString = $"{num1}{num2}";
+      int index = Convert.ToInt32(numString);
+      return _dictionary[index];
+    }
+
+    // Convert number from 20 to 99 to word
+    private string FromTwentyToHundred(int num1, int num2)
+    {
+      int index = Convert.ToInt32(num1.ToString());
+      return num2 == 0 ? $"{_dictionary[num1 * 10]}" : $"{_dictionary[num1 * 10]} {_dictionary[num2]}";
+    }
+
+    #endregion
+
     #region INotifyPropertyChanged
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -209,7 +229,8 @@ namespace NumberToString
 
     #endregion
 
-    #region IDataErrorInof
+    // Validation
+    #region IDataErrorInfo
 
     public string Error
     {
