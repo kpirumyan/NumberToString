@@ -23,7 +23,7 @@ namespace NumberToString
 
     public NumberForm()
     {
-      ConvertCommand = new RelayCommand(ExecuteConvert, CanExecuteConvert);
+      ConvertCommand = new BaseCommand(ExecuteConvert, CanExecuteConvert);
       _dictionary = new Dictionary<int, string>();
       _dictionary.Add(0, "zero");
       _dictionary.Add(1, "one");
@@ -102,7 +102,7 @@ namespace NumberToString
 
     #region Commands
 
-    public static RelayCommand ConvertCommand { get; set; }
+    public static BaseCommand ConvertCommand { get; set; }
 
     private bool CanExecuteConvert(object parameter)
     {

@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace NumberToString
 {
-  public class RelayCommand : ICommand
+  public class BaseCommand : ICommand
   {
     private readonly Action<object> _execute;
     private readonly Predicate<object> _canExecute;
@@ -18,7 +18,7 @@ namespace NumberToString
       remove { CommandManager.RequerySuggested -= value; }
     }
 
-    public RelayCommand(Action<object> execute, Predicate<object> canExecute)
+    public BaseCommand(Action<object> execute, Predicate<object> canExecute)
     {
       _execute = execute;
       _canExecute = canExecute;
