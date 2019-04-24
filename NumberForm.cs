@@ -102,7 +102,7 @@ namespace NumberToString
 
     #region Commands
 
-    public static BaseCommand ConvertCommand { get; set; }
+    public BaseCommand ConvertCommand { get; set; }
 
     private bool CanExecuteConvert(object parameter)
     {
